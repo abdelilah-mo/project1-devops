@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: project1-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: tasksdb
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  backend:
+    build: ./backend
+    container_name: project1-backend
+    environment:
+      DB_HOST: mysql
+      DB_PASSWORD: rootpassword
+    depends_on:
+      - mysql
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build: ./frontend
+    container_name: project1-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+
+volumes:
+  mysql-data:
